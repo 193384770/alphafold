@@ -205,6 +205,7 @@ RESTYPE_RIGIDGROUP_MASK[:20, 4:] = residue_constants.chi_angles_mask
 def get_atom37_mask(aatype):
   return utils.batched_gather(jnp.asarray(RESTYPE_ATOM37_MASK), aatype)
 
+# 获得每个氨基酸的N14掩码，每个原子的掩码
 def get_atom14_mask(aatype):
   return utils.batched_gather(jnp.asarray(RESTYPE_ATOM14_MASK), aatype)
 
