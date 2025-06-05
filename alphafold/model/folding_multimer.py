@@ -896,7 +896,7 @@ def find_structural_violations(
     ) -> Dict[str, Any]:
   """Computes several checks for structural Violations."""
 
-  # 计算残基之间的键角冲突情况
+  # 计算残基之间的键长与角冲突情况
   connection_violations = all_atom_multimer.between_residue_bond_loss(
       pred_atom_positions=pred_positions,
       pred_atom_mask=mask.astype(jnp.float32),
