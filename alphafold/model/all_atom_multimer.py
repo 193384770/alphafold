@@ -205,7 +205,6 @@ RESTYPE_RIGIDGROUP_MASK[:20, 4:] = residue_constants.chi_angles_mask
 def get_atom37_mask(aatype):
   return utils.batched_gather(jnp.asarray(RESTYPE_ATOM37_MASK), aatype)
 
-
 def get_atom14_mask(aatype):
   return utils.batched_gather(jnp.asarray(RESTYPE_ATOM14_MASK), aatype)
 
@@ -491,7 +490,7 @@ def extreme_ca_ca_distance_violations(
   mask = this_ca_mask * next_ca_mask * has_no_gap_mask
   return utils.mask_mean(mask=mask, value=violations)
 
-
+# 计算残基之间的键角冲突情况
 def between_residue_bond_loss(
     pred_atom_positions: geometry.Vec3Array,  # (N, 37(14))
     pred_atom_mask: jnp.ndarray,  # (N, 37(14))
