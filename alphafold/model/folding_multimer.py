@@ -896,7 +896,7 @@ def find_structural_violations(
     ) -> Dict[str, Any]:
   """Computes several checks for structural Violations."""
 
-  # Compute between residue backbone violations of bonds and angles.
+  # 计算残基之间的键角冲突情况
   connection_violations = all_atom_multimer.between_residue_bond_loss(
       pred_atom_positions=pred_positions,
       pred_atom_mask=mask.astype(jnp.float32),
@@ -905,9 +905,10 @@ def find_structural_violations(
       tolerance_factor_soft=config.violation_tolerance_factor,
       tolerance_factor_hard=config.violation_tolerance_factor)
 
-  # Compute the van der Waals radius for every atom
-  # (the first letter of the atom name is the element type).
-  # shape (N, 14)
+  
+  # 计算每个原子的范德华半径
+  # 原子名称的首字母代表元素类型
+  # 形状 (N, 14)
   atomtype_radius = jnp.array([
       residue_constants.van_der_waals_radius[name[0]]
       for name in residue_constants.atom_types
@@ -916,7 +917,7 @@ def find_structural_violations(
   atom_radius = mask * utils.batched_gather(atomtype_radius,
                                             residx_atom14_to_atom37)
 
-  # Compute the between residue clash loss.
+  # 计算残基之间的冲突损失。
   between_residue_clashes = all_atom_multimer.between_residue_clash_loss(
       pred_positions=pred_positions,
       atom_exists=mask,
@@ -926,8 +927,7 @@ def find_structural_violations(
       overlap_tolerance_hard=config.clash_overlap_tolerance,
       asym_id=asym_id)
 
-  # Compute all within-residue violations (clashes,
-  # bond length and angle violations).
+  # 计算所有残基内违规（冲突、键长和键角违规）。
   restype_atom14_bounds = residue_constants.make_atom14_dists_bounds(
       overlap_tolerance=config.clash_overlap_tolerance,
       bond_length_tolerance_factor=config.violation_tolerance_factor)
@@ -942,7 +942,7 @@ def find_structural_violations(
       dists_upper_bound=dists_upper_bound,
       tighten_bounds_for_loss=0.0)
 
-  # Combine them to a single per-residue violation mask (used later for LDDT).
+  # 将它们组合成单个残基违规掩码（稍后用于 LDDT）。
   per_residue_violations_mask = jnp.max(jnp.stack([
       connection_violations['per_residue_violation_mask'],
       jnp.max(between_residue_clashes['per_atom_clash_mask'], axis=-1),
