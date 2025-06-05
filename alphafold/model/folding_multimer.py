@@ -641,6 +641,8 @@ class StructureModule(hk.Module):
     all_atom_positions = batch['all_atom_positions']
     all_atom_positions = geometry.Vec3Array.from_array(all_atom_positions)
     all_atom_mask = batch['all_atom_mask']
+
+    # 序列中每个氨基酸的掩码（某些氨基酸是补齐的，需要mask）
     seq_mask = batch['seq_mask']
     residue_index = batch['residue_index']
 
@@ -651,6 +653,7 @@ class StructureModule(hk.Module):
     chi_angles, chi_mask = all_atom_multimer.compute_chi_angles(
         all_atom_positions, all_atom_mask, aatype)
 
+    # 获得每个氨基酸的14原子掩码，
     pred_mask = all_atom_multimer.get_atom14_mask(aatype)
     pred_mask *= seq_mask[:, None]
     pred_positions = value['final_atom14_positions']
